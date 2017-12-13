@@ -663,10 +663,7 @@ public class Transform {
      * @param right boundary
      * @param bottom boundary
      * @param top boundary
-     * @param r shift value
-     * @param g shift value
-     * @param b shift value
-     * @param a shift value
+     * @param rgba values to modify
      * @return modified image
      */
     public static int[][] colorShiftSelect(final int[][] originalImage,
@@ -678,7 +675,7 @@ public class Transform {
         int r = rgba[0];
         int g = rgba[1];
         int b = rgba[2];
-        int a = rgba[3];
+        int a = rgba[2 + 1];
         int[][] shiftImage = originalImage;
         int[][] modifiedImage = originalImage;
         if ((left >= right)
@@ -751,7 +748,7 @@ public class Transform {
     /**
      * 1/9, the square blur coefficient that makes each pixel the average of surrounding pixs.
      */
-    static final double BLUR = 0.1111;
+    static final int BLUR = 9;
     /**
      *  Adds a simple square blur to an image.
      * @param originalImage to be blurred
@@ -761,25 +758,17 @@ public class Transform {
         int[][] output = new int[originalImage.length][originalImage[0].length];
         for (int row = 1; row < originalImage.length - 1; row++) {
             for (int col = 1; col < originalImage[0].length - 1; col++) {
-                double pix = (BLUR * originalImage[row][col])
-                          + (BLUR * originalImage[row - 1][col - 1])
-                          + (BLUR * originalImage[row - 1][col])
-                          + (BLUR * originalImage[row - 1][col + 1])
-                          + (BLUR * originalImage[row][col - 1])
-                          + (BLUR * originalImage[row][col + 1])
-                          + (BLUR * originalImage[row + 1][col - 1])
-                          + (BLUR * originalImage[row + 1][col])
-                          + (BLUR * originalImage[row + 1][col + 1]);
+                long pix = (originalImage[row][col])
+                          + (originalImage[row - 1][col - 1])
+                          + (originalImage[row - 1][col])
+                          + (originalImage[row - 1][col + 1])
+                          + (originalImage[row][col - 1])
+                          + (originalImage[row][col + 1])
+                          + (originalImage[row + 1][col - 1])
+                          + (originalImage[row + 1][col])
+                          + (originalImage[row + 1][col + 1]);
+                pix = pix / BLUR;
                 output[row][col] = (int) pix;
-            }
-        }
-        return output;
-    }
-    public static int[][] blackAndWhite(final int[][] originalImage) {
-        int[][] output = new int[originalImage.length][originalImage[0].length];
-        for(int row = 0; row < originalImage.length; row++) {
-            for(int col = 0; col < originalImage[0].length; col++) {
-                output[row][col] =
             }
         }
         return output;
