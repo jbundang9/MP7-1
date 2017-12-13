@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * A class that runs implements several simple transformations on 2D image arrays.
  * <p>
@@ -653,5 +655,123 @@ public class Transform {
             }
         }
         return outputImage;
+    }
+    /**
+     *  Color shifts a select portion of the original image, defined by the boundaries.
+     * @param originalImage to be modified.
+     * @param left boundary
+     * @param right boundary
+     * @param bottom boundary
+     * @param top boundary
+     * @param r shift value
+     * @param g shift value
+     * @param b shift value
+     * @param a shift value
+     * @return modified image
+     */
+    public static int[][] colorShiftSelect(final int[][] originalImage,
+                                           final int left,
+                                           final int right,
+                                           final int bottom,
+                                           final int top,
+                                           final int r,
+                                           final int g,
+                                           final int b,
+                                           final int a) {
+        int[][] shiftImage = originalImage;
+        int[][] modifiedImage = originalImage;
+        if ((left >= right)
+            || (bottom >= top)
+            || (left < 0)
+            || (bottom < 0)
+            || (right > originalImage.length)
+            || (top > originalImage[0].length)) {
+            return originalImage;
+        }
+        if (r > 0) {
+            shiftImage = moreRed(shiftImage, r);
+        } else {
+            shiftImage = lessRed(shiftImage, -1 * r);
+        }
+        if (g > 0) {
+            shiftImage = moreGreen(shiftImage, g);
+        } else {
+            shiftImage = lessGreen(shiftImage, 1 * g);
+        }
+        if (b > 0) {
+            shiftImage = moreBlue(shiftImage, b);
+        } else {
+            shiftImage = lessBlue(shiftImage, -1 * b);
+        }
+        if (a > 0) {
+            shiftImage = moreAlpha(shiftImage, a);
+        } else {
+            shiftImage = lessAlpha(shiftImage, -1 * a);
+        }
+        for (int row = left; row < right; row++) {
+            for (int col = bottom; col < top; col++) {
+                modifiedImage[row][col] = shiftImage[row][col];
+            }
+        }
+        return modifiedImage;
+    }
+    /**
+     * Sorts all of the pixels in the original image from lowest to highest numerical value.
+     * @param originalImage to be modified.
+     * @return modified, sorted image.
+     */
+    public static int[][] sortedPixels(final int[][] originalImage) {
+        int[][] output = new int[originalImage.length][originalImage[0].length];
+        int[] pixelArray = new int[originalImage.length * originalImage[0].length];
+        for (int row = 0; row < output.length; row++) {
+            for (int col = 0; col < output[0].length; col++) {
+                int pos = (row * output[0].length) + col;
+                pixelArray[pos] = originalImage[row][col];
+            }
+        }
+        Arrays.sort(pixelArray);
+        for (int i = 0; i < pixelArray.length; i++) {
+            int row = i / output[0].length;
+            int col = i % output[0].length;
+            output[row][col] = pixelArray[i];
+        }
+        return output;
+    }
+    /**
+     * Returns the color value of a specific pixel.
+     * @param originalImage to be sampled.
+     * @param row of the pixel
+     * @param col of the pixel
+     * @return the color of the individual pixel.
+     */
+    public static int eyedropper(final int[][] originalImage, final int row, final int col) {
+        return originalImage[row][col];
+    }
+    /**
+     * 1/9, the square blur coefficient that makes each pixel the average of surrounding pixs.
+     */
+    static final double BLUR = 0.1111;
+    /**
+     *  Adds a simple square blur to an image.
+     * @param originalImage to be blurred
+     * @return blurred image.
+     */
+    public static int[][] blur(final int[][] originalImage) {
+        int[][] output = new int[originalImage.length][originalImage[0].length];
+        for (int row = 1; row < originalImage.length - 1; row++) {
+            for (int col = 1; col < originalImage[0].length - 1; col++) {
+                double pix = (BLUR * originalImage[row][col])
+                          + (BLUR * originalImage[row - 1][col - 1])
+                          + (BLUR * originalImage[row - 1][col])
+                          + (BLUR * originalImage[row - 1][col + 1])
+                          + (BLUR * originalImage[row][col - 1])
+                          + (BLUR * originalImage[row][col + 1])
+                          + (BLUR * originalImage[row + 1][col - 1])
+                          + (BLUR * originalImage[row + 1][col])
+                          + (BLUR * originalImage[row + 1][col + 1]);
+                output[row][col] = (int) pix;
+            }
+        }
+        return output;
     }
 }
