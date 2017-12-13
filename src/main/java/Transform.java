@@ -674,10 +674,11 @@ public class Transform {
                                            final int right,
                                            final int bottom,
                                            final int top,
-                                           final int r,
-                                           final int g,
-                                           final int b,
-                                           final int a) {
+                                           final int[] rgba) {
+        int r = rgba[0];
+        int g = rgba[1];
+        int b = rgba[2];
+        int a = rgba[3];
         int[][] shiftImage = originalImage;
         int[][] modifiedImage = originalImage;
         if ((left >= right)
@@ -770,6 +771,15 @@ public class Transform {
                           + (BLUR * originalImage[row + 1][col])
                           + (BLUR * originalImage[row + 1][col + 1]);
                 output[row][col] = (int) pix;
+            }
+        }
+        return output;
+    }
+    public static int[][] blackAndWhite(final int[][] originalImage) {
+        int[][] output = new int[originalImage.length][originalImage[0].length];
+        for(int row = 0; row < originalImage.length; row++) {
+            for(int col = 0; col < originalImage[0].length; col++) {
+                output[row][col] =
             }
         }
         return output;
